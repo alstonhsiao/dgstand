@@ -20,7 +20,7 @@
     client.onMessageArrived = onMessageArrived;
 
     // connect the client
-    client.connect({onSuccess:onConnect, userName: "YOUR_USERNAME", password: "YOUR_PASSWORD"});
+    client.connect({onSuccess:onConnect, userName: "", password: ""});
 
     // called when the client connects
     function onConnect() {
@@ -48,7 +48,7 @@
 
     function sendMessage(message) {
       var message = new Paho.MQTT.Message(message);
-      message.destinationName = "YOUR_TOPIC";
+      message.destinationName = "alstonDoor";
       client.send(message);
     }
   </script>
