@@ -13,7 +13,7 @@
 
   <script>
     // Create a client instance
-    var client = new Paho.MQTT.Client("YOUR_SERVER_URL", Number(YOUR_PORT), "YOUR_CLIENT_ID");
+    var client = new Paho.MQTT.Client("broker.MQTTGO.io", Number(1883), "alstonDoor");
 
     // set callback handlers
     client.onConnectionLost = onConnectionLost;
