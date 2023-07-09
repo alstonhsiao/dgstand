@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>MQTT Webpage 2</title>
+  <title>MQTT Webpage 3</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script>
 </head>
 <body>
@@ -13,7 +13,7 @@
 
   <script>
     // Create a client instance
-    var client = new Paho.MQTT.Client("wss://broker.MQTTGO.io",8084, "3018291877");
+    var client = new Paho.MQTT.Client("wss://broker.MQTTGO.io",1883, "3018291877");
 
     // set callback handlers
     client.onConnectionLost = onConnectionLost;
