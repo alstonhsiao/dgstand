@@ -40,6 +40,55 @@
     client.onConnectionLost = onConnectionLost;
     client.onMessageArrived = onMessageArrived;
 
+    
+    // countDown 30 Seconds Code
+
+    var timeoutID;
+
+function setup() {
+    this.addEventListener("touchstart", resetTimer, false);
+    this.addEventListener("touchmove", resetTimer, false);
+    this.addEventListener("touchend", resetTimer, false);
+    this.addEventListener("scroll", resetTimer, false);
+  
+    startTimer();
+}
+setup();
+
+function startTimer() {
+    // 等待 30 秒後，如果沒有任何動作則彈出對話框
+    timeoutID = window.setTimeout(goInactive, 30000);
+}
+
+function resetTimer(e) {
+    window.clearTimeout(timeoutID);
+  
+    goActive();
+}
+
+function goInactive() {
+    // 彈出對話框，詢問用戶是否要重新載入頁面
+    if (confirm("網頁已閒置超過 30 秒，是否要重新載入頁面？")) {
+        location.reload();
+    } else {
+        // 如果用戶選擇不重新載入，則重設計時器
+        resetTimer();
+    }
+}
+
+function goActive() {
+    // 重設計時器
+    startTimer();
+}
+
+
+
+    
+
+
+
+//MQTT code
+    
     // connect the client
     client.connect({onSuccess:onConnect});
 
