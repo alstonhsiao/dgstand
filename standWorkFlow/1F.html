@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+    <header>
+        <h1>1F工作清單 Beta</h1>
+    </header>
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>六個連結按鈕</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-wrap: wrap;
+            height: 100vh;
+            justify-content: center;
+            align-items: center;
+            font-family: Arial, sans-serif;
+        }
+        .btn-container {
+            display: flex;
+            flex-wrap: wrap;
+            width: 100vw;
+            justify-content: space-around;
+        }
+        .btn {
+            width: calc(50% - 20px);
+            height: 33.33vh;
+            font-size: 35px;
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            margin: 10px;
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-decoration: none;
+            color: white;
+        }
+        .btn:active {
+            transform: scale(0.95);
+        }
+        .btn-a {
+            background-color: #FF5733;
+        }
+        .btn-b {
+            background-color: #33FF57;
+        }
+        .btn-c {
+            background-color: #5733FF;
+        }
+        .btn-d {
+            background-color: #FF33C4;
+        }
+        .btn-e {
+            background-color: #C433FF;
+        }
+        .btn-f {
+            background-color: #33C4FF;
+        }
+    </style>
+</head>
+<body>
+    <div class="btn-container">
+        <a href="https://script.google.com/macros/s/AKfycbzzS8Fcy73a7MekpRFNDPQNy" class="btn btn-a">訂單作業 Pekerjaan pesanan</a>
+        <a href="https://script.google.com/macros/s/AKfycbzuG-xxWsFltvhdMBh8qAvuGRbWt2dIjHQJi80yyyc2rQXL59Ww/exec" class="btn btn-b">架模具作業 Pekerjaan menata cetakan</a>
+        <a href="https://script.google.com/macros/s/AKfycbytMFmfb3JLhLY_mFSiABTqyjYd1KHYOxZb29D2x-p1iCWCY-pOq2MZyg/exec" class="btn btn-c">撿料作業 Pekerjaan mengambil bahan</a>
+        <a href="https://script.google.com/macros/s/AKfycbybuvNjELXvuporvhPsZDJbGGWoY2W7hAwVfWfejJx7vNCmy5Gcg9r/exec" class="btn btn-d">扳手比對 Pembandingan kunci pas</a>
+        <a href="https://script.google.com/macros/s/AKfycbwvhdcFwv6L-gvbVUJSRrrxS9oNhn0mJZc3SOlqGlQgw_wHxTaagXz9Lg/exec" class="btn btn-e">維修作業 Pekerjaan perbaikan</a>
+        <a href="https://script.google.com/macros/s/AKfycbw4TFo4RycZmHVeBFw6AN3x-Ys/dev" class="btn btn-f">其他 Lainnya</a>
+    </div>
+</body>
+</html>
