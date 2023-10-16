@@ -13,7 +13,7 @@
 
 <script>
     function sendCommand(command) {
-        fetch(`http://122.117.9.50:1880/${command}`, {
+        fetch(`http://your_domain_or_IP/${command}`, {
             method: 'POST'
         }).then(response => response.json())
         .then(data => console.log(data))
