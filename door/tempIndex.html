@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Simple Node-RED Control</title>
+</head>
+<body>
+  <button onclick="sendCommand('button1')">Button 1</button>
+  <button onclick="sendCommand('button2')">Button 2</button>
+  <button onclick="sendCommand('button3')">Button 3</button>
+  <button onclick="sendCommand('button4')">Button 4</button>
+  <button onclick="sendCommand('button5')">Button 5</button>
+
+  <script>
+    function sendCommand(buttonID) {
+      fetch('http://122.117.9.50:1880/command', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ button: buttonID })
+      })
+      .then(response => response.json())
+      .then(data => console.log('Success:', data))
+      .catch((error) => console.error('Error:', error));
+    }
+  </script>
+</body>
+</html>
