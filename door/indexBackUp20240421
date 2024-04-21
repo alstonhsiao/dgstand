@@ -1,0 +1,129 @@
+//20240421備份一個可以運行的版本
+<!DOCTYPE html>
+<html>
+<head>
+  <title>MQTT Door</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script>
+  <style>
+    body {
+      background-color: black; /* 網頁底色為黑色 */
+    }
+    
+    
+    button {
+      display: block; /* 使按鈕直列排列 */
+      margin-bottom: 30px; /* 按鈕之間的空間 */     
+      background-color: yellow; /* 按鈕底色 */
+      transition: background-color 1s; /* 背景顏色變化的過渡時間 */
+      font-size: 72px; /* 字體大小放大兩倍 */
+      width: 800px; /* 設定按鈕寬度 */
+      height:240px;
+      text-align: center; /* 置中按鈕中的文字 */
+    }
+
+    button:active {
+      background-color: red; /* 按下按鈕後的底色 */
+    }
+  </style>
+</head>
+<body>
+  <button id="btn1">開門 Open</button>
+  <button id="btn2">停止 Stop </button>
+  <button id="btn3">關門 Close</button>
+  <button id="btn4">10S OPEN</button>
+  <button id="btn5">20S OPEN</button>
+
+  <script>
+    // Create a client instance
+    var client = new Paho.MQTT.Client("wss://broker.MQTTGO.io:8084/mqtt", "2333");
+
+    // set callback handlers
+    client.onConnectionLost = onConnectionLost;
+    client.onMessageArrived = onMessageArrived;
+
+    
+    // countDown 30 Seconds Code
+
+    var timeoutID;
+
+function setup() {
+    this.addEventListener("touchstart", resetTimer, false);
+    this.addEventListener("touchmove", resetTimer, false);
+    this.addEventListener("touchend", resetTimer, false);
+    this.addEventListener("scroll", resetTimer, false);
+  
+    startTimer();
+}
+setup();
+
+function startTimer() {
+    // 等待 30 秒後，如果沒有任何動作則彈出對話框
+    timeoutID = window.setTimeout(goInactive, 30000);
+}
+
+function resetTimer(e) {
+    window.clearTimeout(timeoutID);
+  
+    goActive();
+}
+
+function goInactive() {
+    // 彈出對話框，詢問用戶是否要重新載入頁面
+    if (confirm("網頁已閒置超過 30 秒，是否要重新載入頁面？")) {
+        location.reload();
+    } else {
+        // 如果用戶選擇不重新載入，則重設計時器
+        resetTimer();
+    }
+}
+
+function goActive() {
+    // 重設計時器
+    startTimer();
+}
+
+
+
+    
+
+
+
+//MQTT code
+    
+    // connect the client
+    client.connect({onSuccess:onConnect});
+
+    // called when the client connects
+    function onConnect() {
+      console.log("Connected to MQTT Broker");
+
+      // Attach Button Events
+      document.getElementById("btn1").addEventListener("click", function() { sendMessage("1"); });
+      document.getElementById("btn2").addEventListener("click", function() { sendMessage("2"); });
+      document.getElementById("btn3").addEventListener("click", function() { sendMessage("3"); });
+      document.getElementById("btn4").addEventListener("click", function() { sendMessage("4"); });
+      document.getElementById("btn5").addEventListener("click", function() { sendMessage("5"); });
+    }
+
+    // called when the client loses its connection
+    function onConnectionLost(responseObject) {
+      if (responseObject.errorCode !== 0) {
+        console.log("onConnectionLost:"+responseObject.errorMessage);
+      }
+    }
+
+    // called when a message arrives
+    function onMessageArrived(message) {
+      console.log("onMessageArrived:"+message.payloadString);
+    }
+
+    function sendMessage(message) {
+      var message = new Paho.MQTT.Message(message);
+      message.destinationName = "alstonDoor"; //MQTT TOPIC
+      client.send(message);
+    }
+  </script>
+
+</body>
+</html>
+
