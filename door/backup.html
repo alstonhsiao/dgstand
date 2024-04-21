@@ -90,6 +90,7 @@
     // 當客戶端連接成功時呼叫
     function onConnect() {
       console.log("已連接到 MQTT Broker");
+      client.subscribe("alstonDoor"); // 訂閱 alstonDoor 主題
 
       // 附加按鈕事件
       document.getElementById("btn1").addEventListener("click", function() { sendMessage("1"); });
@@ -115,6 +116,7 @@
       var mqttMessage = new Paho.MQTT.Message(message);
       mqttMessage.destinationName = "alstonDoor"; // MQTT 主題
       client.send(mqttMessage);
+      console.log("已發送訊息：" + message);
     }
   </script>
 
