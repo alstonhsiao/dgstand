@@ -112,9 +112,9 @@
     }
 
     function sendMessage(message) {
-      var message = new Paho.MQTT.Message(message);
-      message.destinationName = "alstonDoor"; // MQTT 主題
-      client.send(message);
+      var mqttMessage = new Paho.MQTT.Message(message);
+      mqttMessage.destinationName = "alstonDoor"; // MQTT 主題
+      client.send(mqttMessage);
     }
   </script>
 
