@@ -87,7 +87,13 @@
     // MQTT 連接程式碼
     
     // 連接到 MQTT Broker
-    client.connect({onSuccess:onConnect});
+    client.connect({
+  onSuccess: onConnect,
+  onFailure: function (message) {
+    console.log("Connection failed: " + message.errorMessage);
+  }
+});
+    
 
     // 當客戶端連接成功時呼叫
     function onConnect() {
