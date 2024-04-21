@@ -34,7 +34,7 @@
 
   <script>
     // 建立 MQTT 客戶端實例
-    var client = new Paho.MQTT.Client("wss://122.117.9.50:8084/mqtt", "2333");
+    var client = new Paho.MQTT.Client("ws://122.117.9.50:1883/mqtt", "clientId-"+parseInt(Math.random() * 100, 10));
 
     // 設定回呼函式
     client.onConnectionLost = onConnectionLost;
