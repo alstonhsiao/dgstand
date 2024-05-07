@@ -11,7 +11,7 @@
     </style>
 </head>
 <body>
-    <button onclick="sendMessage(10)">發送10</button>
+    <button onclick="sendMessage(10)">發送100</button>
     <button onclick="sendMessage(11)">發送11</button>
     <button onclick="sendMessage(12)">發送12</button>
     <button onclick="sendMessage(13)">發送13</button>
@@ -22,7 +22,13 @@
         var options = {
             userName: "alstonh",
             password: "Stand568",
-            useSSL: true
+            useSSL: true,
+            onSuccess: function() {
+                console.log("Connected to MQTT server");
+            },
+            onFailure: function(message) {
+                console.log("Connection failed: " + message.errorMessage);
+            }
         };
 
         // 創建MQTT客戶端實例
@@ -45,9 +51,15 @@
         function sendMessage(message) {
             var topic = "alstonDoor";
             var payload = message.toString();
-            var message = new Paho.MQTT.Message(payload);
-            message.destinationName = topic;
-            client.send(message);
+            var mqttMessage = new Paho.MQTT.Message(payload);
+            mqttMessage.destinationName = topic;
+
+            if (client.isConnected()) {
+                client.send(mqttMessage);
+                console.log("Message sent: " + payload);
+            } else {
+                console.log("Client is not connected");
+            }
         }
     </script>
 </body>
