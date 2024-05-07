@@ -1,25 +1,54 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>MQTT Trigger</title>
+    <title>MQTT按鈕示例</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/paho-mqtt.min.js"></script>
+    <style>
+        button {
+            padding: 10px 20px;
+            margin: 10px;
+        }
+    </style>
 </head>
 <body>
+    <button onclick="sendMessage(10)">發送10</button>
+    <button onclick="sendMessage(11)">發送11</button>
+    <button onclick="sendMessage(12)">發送12</button>
+    <button onclick="sendMessage(13)">發送13</button>
+    <button onclick="sendMessage(14)">發送14</button>
 
-<button onclick="sendCommand('command1')">Command 1</button>
-<button onclick="sendCommand('command2')">Command 2</button>
-<button onclick="sendCommand('command3')">Command 3</button>
-<button onclick="sendCommand('command4')">Command 4</button>
-<button onclick="sendCommand('command5')">Command 5</button>
+    <script>
+        // 設置MQTT連接選項
+        var options = {
+            userName: "alstonh",
+            password: "Stand568",
+            useSSL: true
+        };
 
-<script>
-    function sendCommand(command) {
-        fetch(`http://your_domain_or_IP/${command}`, {
-            method: 'POST'
-        }).then(response => response.json())
-        .then(data => console.log(data))
-        .catch((error) => console.error('Error:', error));
-    }
-</script>
+        // 創建MQTT客戶端實例
+        var client = new Paho.MQTT.Client("d6c113ad827c42ba8dfaf66f3398e7b6.s1.eu.hivemq.cloud", 8884, "clientId");
 
+        // 設置連接回調函數
+        client.onConnectionLost = onConnectionLost;
+
+        // 連接到MQTT服務器
+        client.connect(options);
+
+        // 連接丟失回調函數
+        function onConnectionLost(responseObject) {
+            if (responseObject.errorCode !== 0) {
+                console.log("Connection lost: " + responseObject.errorMessage);
+            }
+        }
+
+        // 發送消息函數
+        function sendMessage(message) {
+            var topic = "alstonDoor";
+            var payload = message.toString();
+            var message = new Paho.MQTT.Message(payload);
+            message.destinationName = topic;
+            client.send(message);
+        }
+    </script>
 </body>
 </html>
