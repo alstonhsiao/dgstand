@@ -1,12 +1,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Secure Webhook Door Control</title>
+  <title>Enhanced Webhook Door Control Test</title>
   <style>
     body {
       background-color: black;
       color: white;
       font-family: Arial, sans-serif;
+      padding: 20px;
     }
     
     button {
@@ -22,7 +23,7 @@
     button:active {
       background-color: red;
     }
-    #status, #testResult {
+    #status, #testResult, #debugInfo {
       font-size: 18px;
       margin-top: 20px;
     }
@@ -30,10 +31,15 @@
       background-color: #4CAF50;
       color: white;
     }
+    #debugInfo {
+      white-space: pre-wrap;
+      background-color: #333;
+      padding: 10px;
+    }
   </style>
 </head>
 <body>
-  <h1>Secure Door Control Test</h1>
+  <h1>Enhanced Door Control Test</h1>
   <button id="testButton">Test Webhook</button>
   <button id="btn1">開門 Open</button>
   <button id="btn2">停止 Stop</button>
@@ -42,14 +48,24 @@
   <button id="btn5">20S OPEN</button>
   <div id="status"></div>
   <div id="testResult"></div>
+  <div id="debugInfo"></div>
 
   <script>
     const webhookUrl = 'https://122.117.9.50:1880/alstonwebhook';
     const statusElement = document.getElementById('status');
     const testResultElement = document.getElementById('testResult');
+    const debugInfoElement = document.getElementById('debugInfo');
+
+    function updateDebugInfo(info) {
+      debugInfoElement.textContent += info + '\n';
+    }
 
     function sendWebhook(message) {
       statusElement.textContent = '正在發送請求...';
+      updateDebugInfo(`正在發送請求: ${message}`);
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000);  // 10 seconds timeout
 
       fetch(webhookUrl, {
         method: 'POST',
@@ -60,8 +76,10 @@
           topic: "alstonh2",
           message: message
         }),
+        signal: controller.signal
       })
       .then(response => {
+        clearTimeout(timeoutId);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -70,15 +88,24 @@
       .then(data => {
         console.log('Success:', data);
         statusElement.textContent = '請求成功發送';
+        updateDebugInfo(`請求成功: ${JSON.stringify(data)}`);
       })
       .catch((error) => {
         console.error('Error:', error);
         statusElement.textContent = `錯誤: ${error.message}`;
+        updateDebugInfo(`錯誤: ${error.message}`);
+        if (error.name === 'AbortError') {
+          updateDebugInfo('請求超時');
+        }
       });
     }
 
     function testWebhook() {
       testResultElement.textContent = '正在測試 webhook...';
+      updateDebugInfo('開始測試 webhook');
+
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000);  // 10 seconds timeout
 
       fetch(webhookUrl, {
         method: 'POST',
@@ -89,8 +116,10 @@
           topic: "alstonh2",
           message: "test"
         }),
+        signal: controller.signal
       })
       .then(response => {
+        clearTimeout(timeoutId);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -99,10 +128,15 @@
       .then(data => {
         console.log('Test Success:', data);
         testResultElement.textContent = 'Webhook 測試成功！伺服器正在運行。';
+        updateDebugInfo(`測試成功: ${JSON.stringify(data)}`);
       })
       .catch((error) => {
         console.error('Test Error:', error);
-        testResultElement.textContent = `Webhook 測試失敗: ${error.message}。請檢查伺服器是否正在運行並支持HTTPS。`;
+        testResultElement.textContent = `Webhook 測試失敗: ${error.message}`;
+        updateDebugInfo(`測試失敗: ${error.message}`);
+        if (error.name === 'AbortError') {
+          updateDebugInfo('測試請求超時');
+        }
       });
     }
     
