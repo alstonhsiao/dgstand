@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Webhook Door</title>
+  <style>
+    body {
+      background-color: black;
+      color: white;
+    }
+    
+    button {
+      display: block;
+      margin-bottom: 30px;
+      background-color: yellow;
+      transition: background-color 1s;
+      font-size: 72px;
+      width: 800px;
+      height: 240px;
+      text-align: center;
+    }
+    button:active {
+      background-color: red;
+    }
+    #status {
+      font-size: 24px;
+      margin-top: 20px;
+    }
+  </style>
+</head>
+<body>
+  <button id="btn1">開門 Open</button>
+  <button id="btn2">停止 Stop </button>
+  <button id="btn3">關門 Close</button>
+  <button id="btn4">10S OPEN</button>
+  <button id="btn5">20S OPEN</button>
+  <div id="status"></div>
+  <script>
+    // countDown 30 Seconds Code
+    var timeoutID;
+    function setup() {
+      this.addEventListener("touchstart", resetTimer, false);
+      this.addEventListener("touchmove", resetTimer, false);
+      this.addEventListener("touchend", resetTimer, false);
+      this.addEventListener("scroll", resetTimer, false);
+      
+      startTimer();
+    }
+    setup();
+    function startTimer() {
+      timeoutID = window.setTimeout(goInactive, 30000);
+    }
+    function resetTimer(e) {
+      window.clearTimeout(timeoutID);
+      goActive();
+    }
+    function goInactive() {
+      if (confirm("網頁已閒置超過 30 秒，是否要重新載入頁面？")) {
+        location.reload();
+      } else {
+        resetTimer();
+      }
+    }
+    function goActive() {
+      startTimer();
+    }
+    
+    // Webhook code
+    function sendWebhook(message) {
+      const statusElement = document.getElementById('status');
+      statusElement.textContent = '正在發送請求...';
+
+      fetch('https://122.117.9.50:1880/alstonwebhook', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          topic: "alstonh2",
+          message: message
+        }),
+      })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        return response.json();
+      })
+      .then(data => {
+        console.log('Success:', data);
+        statusElement.textContent = '請求成功發送';
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        statusElement.textContent = `錯誤: ${error.message}`;
+      });
+    }
+    
+    // Attach Button Events
+    document.getElementById("btn1").addEventListener("click", function() { sendWebhook("1"); });
+    document.getElementById("btn2").addEventListener("click", function() { sendWebhook("2"); });
+    document.getElementById("btn3").addEventListener("click", function() { sendWebhook("3"); });
+    document.getElementById("btn4").addEventListener("click", function() { sendWebhook("4"); });
+    document.getElementById("btn5").addEventListener("click", function() { sendWebhook("5"); });
+  </script>
+</body>
+</html>
