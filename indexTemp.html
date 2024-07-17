@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Webhook Door Control Test</title>
+  <title>Secure Webhook Door Control</title>
   <style>
     body {
       background-color: black;
@@ -33,7 +33,7 @@
   </style>
 </head>
 <body>
-  <h1>Door Control Test</h1>
+  <h1>Secure Door Control Test</h1>
   <button id="testButton">Test Webhook</button>
   <button id="btn1">開門 Open</button>
   <button id="btn2">停止 Stop</button>
@@ -44,7 +44,7 @@
   <div id="testResult"></div>
 
   <script>
-    const webhookUrl = 'http://122.117.9.50:1880/alstonwebhook';
+    const webhookUrl = 'https://122.117.9.50:1880/alstonwebhook';
     const statusElement = document.getElementById('status');
     const testResultElement = document.getElementById('testResult');
 
@@ -102,7 +102,7 @@
       })
       .catch((error) => {
         console.error('Test Error:', error);
-        testResultElement.textContent = `Webhook 測試失敗: ${error.message}。請檢查伺服器是否正在運行。`;
+        testResultElement.textContent = `Webhook 測試失敗: ${error.message}。請檢查伺服器是否正在運行並支持HTTPS。`;
       });
     }
     
