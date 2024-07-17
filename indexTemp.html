@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Webhook 測試頁面 (JSONP)</title>
+    <title>HTTP Webhook 測試頁面</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -54,7 +54,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>Webhook 測試頁面 (JSONP)</h1>
+        <h1>HTTP Webhook 測試頁面</h1>
         <div class="button-container">
             <button class="test-button" onclick="sendWebhook('1')">開門 Open</button>
             <button class="test-button" onclick="sendWebhook('2')">停止 Stop</button>
@@ -70,18 +70,17 @@
             const resultDiv = document.getElementById('result');
             resultDiv.textContent = '正在發送請求...';
 
-            const script = document.createElement('script');
-            script.src = `http://122.117.9.50:1880/alstonwebhook?topic=alstonh2&message=${message}&callback=handleResponse`;
-            document.body.appendChild(script);
-        }
+            const webhookUrl = `http://122.117.9.50:1880/alstonwebhook?topic=alstonh2&message=${message}`;
 
-        function handleResponse(response) {
-            const resultDiv = document.getElementById('result');
-            if (response && response.success) {
-                resultDiv.textContent = `請求成功: ${JSON.stringify(response)}`;
-            } else {
-                resultDiv.textContent = `錯誤: ${JSON.stringify(response)}`;
-            }
+            fetch(webhookUrl)
+                .then(response => response.text())
+                .then(data => {
+                    resultDiv.textContent = `請求成功: ${data}`;
+                })
+                .catch(error => {
+                    resultDiv.textContent = `錯誤: ${error.message}`;
+                    console.error('Error:', error);
+                });
         }
     </script>
 </body>
