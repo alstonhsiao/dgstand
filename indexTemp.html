@@ -3,84 +3,62 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HTTP Webhook 測試頁面</title>
+    <title>純 JavaScript Webhook 請求測試</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 20px;
-            background-color: #f0f0f0;
-        }
-        .container {
-            max-width: 600px;
+            max-width: 800px;
             margin: 0 auto;
-            background-color: white;
             padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            line-height: 1.6;
         }
-        h1 {
-            color: #333;
-            text-align: center;
-        }
-        .button-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-between;
-            margin-top: 20px;
-        }
-        .test-button {
-            width: 48%;
-            padding: 10px;
-            margin-bottom: 10px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
+        button {
+            padding: 10px 20px;
             font-size: 16px;
-        }
-        .test-button:hover {
-            background-color: #45a049;
+            cursor: pointer;
         }
         #result {
             margin-top: 20px;
             padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            border: 1px solid #ccc;
             background-color: #f9f9f9;
         }
+        .error { color: red; }
+        .success { color: green; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>HTTP Webhook 測試頁面</h1>
-        <div class="button-container">
-            <button class="test-button" onclick="sendWebhook('1')">開門 Open</button>
-            <button class="test-button" onclick="sendWebhook('2')">停止 Stop</button>
-            <button class="test-button" onclick="sendWebhook('3')">關門 Close</button>
-            <button class="test-button" onclick="sendWebhook('4')">10S OPEN</button>
-            <button class="test-button" onclick="sendWebhook('5')">20S OPEN</button>
-        </div>
-        <div id="result">結果將顯示在這裡...</div>
-    </div>
+    <h1>純 JavaScript Webhook 請求測試</h1>
+    <button onclick="sendRequest()">發送請求</button>
+    <div id="result"></div>
 
     <script>
-        function sendWebhook(message) {
-            const resultDiv = document.getElementById('result');
-            resultDiv.textContent = '正在發送請求...';
+        function sendRequest() {
+            var resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '正在發送請求...';
 
-            const webhookUrl = `http://122.117.9.50:1880/alstonwebhook?topic=alstonh2&message=${message}`;
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', 'http://122.117.9.50:1880/alstonwebhook?topic=alstonh2&message=test', true);
+            
+            xhr.onload = function() {
+                if (xhr.status >= 200 && xhr.status < 300) {
+                    resultDiv.innerHTML = '<span class="success">請求成功！</span><br>回應：' + xhr.responseText;
+                } else {
+                    resultDiv.innerHTML = '<span class="error">請求失敗</span><br>狀態碼：' + xhr.status;
+                }
+            };
 
-            fetch(webhookUrl)
-                .then(response => response.text())
-                .then(data => {
-                    resultDiv.textContent = `請求成功: ${data}`;
-                })
-                .catch(error => {
-                    resultDiv.textContent = `錯誤: ${error.message}`;
-                    console.error('Error:', error);
-                });
+            xhr.onerror = function() {
+                resultDiv.innerHTML = '<span class="error">發送失敗</span><br>' +
+                    '錯誤：無法連接到伺服器<br><br>' +
+                    '可能的原因：<br>' +
+                    '1. CORS 政策限制<br>' +
+                    '2. 網絡連接問題<br>' +
+                    '3. 伺服器未運行或端口未開放<br>' +
+                    '4. HTTPS 混合內容問題';
+            };
+
+            xhr.send();
         }
     </script>
 </body>
