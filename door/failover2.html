@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>備用網站 1 - Failover Site</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js" type="text/javascript"></script>
+  <style>
+    body {
+      background-color: black;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    h1 {
+      color: white;
+      font-size: 48px;
+      text-align: center;
+      width: 100%;
+      background-color: #333;
+      margin: 0;
+      padding: 20px 0;
+    }
+    
+    button {
+      display: block;
+      margin-bottom: 30px;
+      background-color: yellow;
+      transition: background-color 1s;
+      font-size: 72px;
+      width: 800px;
+      height: 240px;
+      text-align: center;
+    }
+    button:active {
+      background-color: red;
+    }
+    .footer-text {
+      color: white;
+    }
+    
+  </style>
+</head>
+<body>
+  <h1>備用 網站 1</h1>
+  <button id="btn1">開門 Open</button>
+  <button id="btn2">停止 Stop </button>
+  <button id="btn3">關門 Close</button>
+  <button id="btn4">10S OPEN</button>
+  <button id="btn5">20S OPEN</button>
+  <script>
+    // Create a client instance
+    var client = new Paho.MQTT.Client("d6c113ad827c42ba8dfaf66f3398e7b6.s1.eu.hivemq.cloud", 8884, "clientId-" + Math.random().toString(16).substr(2, 8));
+    
+    // set callback handlers
+    client.onConnectionLost = onConnectionLost;
+    client.onMessageArrived = onMessageArrived;
+    
+    // countDown 30 Seconds Code
+    var timeoutID;
+    function setup() {
+        this.addEventListener("touchstart", resetTimer, false);
+        this.addEventListener("touchmove", resetTimer, false);
+        this.addEventListener("touchend", resetTimer, false);
+        this.addEventListener("scroll", resetTimer, false);
+      
+        startTimer();
+    }
+    setup();
+    function startTimer() {
+        // 等待 30 秒後，如果沒有任何動作則彈出對話框
+        timeoutID = window.setTimeout(goInactive, 30000);
+    }
+    function resetTimer(e) {
+        window.clearTimeout(timeoutID);
+      
+        goActive();
+    }
+    function goInactive() {
+        // 彈出對話框，詢問用戶是否要重新載入頁面
+        if (confirm("網頁已閒置超過 30 秒，是否要重新載入頁面？")) {
+            location.reload();
+        } else {
+            // 如果用戶選擇不重新載入，則重設計時器
+            resetTimer();
+        }
+    }
+    function goActive() {
+        // 重設計時器
+        startTimer();
+    }
+    
+    //MQTT code
+    
+    // connect options
+    var options = {
+      useSSL: true,
+      userName: "alstonh@gmail.com",
+      password: "Stand568",
+      onSuccess: onConnect,
+      onFailure: doFail
+    }
+
+    // connect the client
+    client.connect(options);
+
+    // called when the client connects
+    function onConnect() {
+      console.log("Connected to MQTT Broker");
+      // Attach Button Events
+      document.getElementById("btn1").addEventListener("click", function() { sendMessage("1"); });
+      document.getElementById("btn2").addEventListener("click", function() { sendMessage("2"); });
+      document.getElementById("btn3").addEventListener("click", function() { sendMessage("3"); });
+      document.getElementById("btn4").addEventListener("click", function() { sendMessage("4"); });
+      document.getElementById("btn5").addEventListener("click", function() { sendMessage("5"); });
+    }
+
+    // called when the client fails to connect
+    function doFail(e){
+      console.log(e);
+    }
+
+    // called when the client loses its connection
+    function onConnectionLost(responseObject) {
+      if (responseObject.errorCode !== 0) {
+        console.log("onConnectionLost:"+responseObject.errorMessage);
+      }
+    }
+    // called when a message arrives
+    function onMessageArrived(message) {
+      console.log("onMessageArrived:"+message.payloadString);
+    }
+    function sendMessage(message) {
+      var message = new Paho.MQTT.Message(message);
+      message.destinationName = "alstonDoor"; //MQTT TOPIC
+      client.send(message);
+    }
+  </script>
+  <div class="footer-text">如果用這個網站也無法控制大門 那麼請將遙控器電源拔掉10秒再通電 如果通電後還是不行 那麼請跟alston聯繫 </div>
+  <div class="footer-text">V.20240722 </div>
+</body>
+</html>
