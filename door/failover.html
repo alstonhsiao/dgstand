@@ -23,6 +23,10 @@
     button:active {
       background-color: red; /* 按下按鈕後的底色 */
     }
+    .footer-text {
+      color: white; /* 設定底部文字為白色 */
+    }
+    
   </style>
 </head>
 <body>
@@ -32,9 +36,6 @@
   <button id="btn4">10S OPEN</button>
   <button id="btn5">20S OPEN</button>
 
-
-  // <!-- 新增連結到備用網頁 -->
-  <a href="backup.html">前往備用網頁</a>
 
   <script>
     // Create a client instance
@@ -112,7 +113,7 @@ function goActive() {
     function onConnectionLost(responseObject) {
       if (responseObject.errorCode !== 0) {
         console.log("onConnectionLost:"+responseObject.errorMessage);
-      }
+      }ba
     }
 
     // called when a message arrives
